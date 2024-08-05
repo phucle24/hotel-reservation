@@ -9,19 +9,15 @@ import java.util.stream.Collectors;
 
 public class ReservationService {
 
-    private static ReservationService instance;
-
+    private static final ReservationService instance = new ReservationService();;
     private final Map<String, IRoom> rooms = new HashMap<>();
     private final Collection<Reservation> reservations = new LinkedList<>();
+    private static final int RECOMMENDED_ROOMS_DAYS = 7;
 
-    // Private constructor to prevent instantiation
-    public ReservationService() {}
+    private ReservationService() {}
 
     // Static method to get the singleton instance
     public static ReservationService getInstance() {
-        if (instance == null) {
-            instance = new ReservationService();
-        }
         return instance;
     }
 
@@ -90,5 +86,20 @@ public class ReservationService {
                 System.out.println(reservation + "\n");
             }
         }
+    }
+
+    public  Collection<IRoom> suggestAlternativeRoom(Date checkInDate, Date checkOutDate) {
+        Date alternativeCheckIn = suggestAlternativeDates(checkInDate);
+        Date alternativeCheckOut = suggestAlternativeDates(checkOutDate);
+
+        return findAvailableRooms(alternativeCheckIn, alternativeCheckOut);
+    }
+
+    public Date suggestAlternativeDates(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, RECOMMENDED_ROOMS_DAYS); // add 7 days
+
+        return calendar.getTime();
     }
 }

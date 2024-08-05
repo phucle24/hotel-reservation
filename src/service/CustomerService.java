@@ -10,15 +10,13 @@ import java.util.Map;
 
 public class CustomerService {
 
-    private static CustomerService instance;
+    private static final CustomerService instance = new CustomerService();
     private final Map<String, Customer> customers = new HashMap<>();
+
+    private CustomerService(){}
 
     // Static method to get the singleton instance
     public static CustomerService getInstance() {
-        if (instance == null) {
-            instance = new CustomerService();
-        }
-
         return instance;
     }
 

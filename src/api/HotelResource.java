@@ -48,6 +48,14 @@ public class HotelResource {
         return reservationService.findRooms(checkIn, checkOut);
     }
 
+    public Collection<IRoom> findRecommendedRoom(Date checkIn, Date checkOut) {
+        return reservationService.suggestAlternativeRoom(checkIn, checkOut);
+    }
+
+    public Date suggestAlternativeDates(Date date) {
+        return reservationService.suggestAlternativeDates(date);
+    }
+
     public Collection<Reservation> getCustomersReservations(String customerEmail) {
         Customer customer = getCustomer(customerEmail);
         if (customer == null) {

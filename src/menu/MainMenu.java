@@ -31,30 +31,32 @@ public class MainMenu {
         while (option != 5) {
             displayMenu();
             System.out.print("Select an option: ");
-            option = scanner.nextInt();
-
-            switch (option) {
-                case 1:
-                    findAndReserveRoom();
-                    break;
-                case 2:
-                    seeMyReservations();
-                    break;
-                case 3:
-                    createAccount();
-                    break;
-                case 4:
-                    openAdminMenu();
-                    break;
-                case 5:
-                    exitApplication();
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again...");
+            try {
+                option = scanner.nextInt();
+                switch (option) {
+                    case 1:
+                        findAndReserveRoom();
+                        break;
+                    case 2:
+                        seeMyReservations();
+                        break;
+                    case 3:
+                        createAccount();
+                        break;
+                    case 4:
+                        openAdminMenu();
+                        break;
+                    case 5:
+                        exitApplication();
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again...");
+                }
+            } catch (InputMismatchException exp) {
+                System.out.println("Invalid option. Please enter a valid number.");
+                scanner.next();
             }
         }
-
-        scanner.close();
     }
 
     private void findAndReserveRoom() {
@@ -72,7 +74,29 @@ public class MainMenu {
             Collection<IRoom> availableRooms = hotelResource.findARoom(checkIn, checkOut);
 
             if (availableRooms.isEmpty()) {
-                    System.out.println("No rooms found.");
+                System.out.println("Available rooms not found. Trying to research alternative room");
+                Collection<IRoom> recommendedRooms= hotelResource.findRecommendedRoom(checkIn, checkOut);
+                if (recommendedRooms.isEmpty()){
+                    System.out.println("No recommended room found");
+                } else {
+                    Date suggestCheckIn = hotelResource.suggestAlternativeDates(checkIn);
+                    Date suggestCheckOut = hotelResource.suggestAlternativeDates(checkOut);
+                    System.out.println("Found suggest room from " +suggestCheckIn+ " to "+suggestCheckOut );
+
+                    printRooms(recommendedRooms);
+
+                    System.out.println("Enter email to book room:");
+                    String customerEmail = scanner.nextLine();
+                    Customer customer = hotelResource.getCustomer(customerEmail);
+                    if (customer != null) {
+                        System.out.println("Enter number room to book: ");
+                        String numberRoom = scanner.nextLine();
+                        IRoom room = hotelResource.getRoom(numberRoom);
+                        hotelResource.bookARoom(customerEmail, room, suggestCheckIn, suggestCheckOut);
+                    } else {
+                        System.out.println("Customer not found for email: " +customerEmail+ "Please try again...");
+                    }
+                }
             } else {
                     printRooms(availableRooms);
 
@@ -88,7 +112,6 @@ public class MainMenu {
                     } else {
                         System.out.println("Customer not found for email: " +customerEmail+ "Please try again...");
                     }
-
             }
         }
     }

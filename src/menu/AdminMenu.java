@@ -1,4 +1,5 @@
 package menu;
+
 import api.AdminResource;
 import model.*;
 import service.CustomerService;
@@ -6,6 +7,7 @@ import service.ReservationService;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class AdminMenu {
@@ -24,33 +26,36 @@ public class AdminMenu {
     public void selectOption() {
         Scanner scanner = new Scanner(System.in);
         int option = 0;
-
         while (option != 5) {
             displayMenu();
             System.out.print("Select an option: ");
-            option = scanner.nextInt();
-
-            switch (option) {
-                case 1:
-                    seeAllCustomers();
-                    break;
-                case 2:
-                    seeAllRooms();
-                    break;
-                case 3:
-                    seeAllReservations();
-                    break;
-                case 4:
-                    addRoom();
-                    break;
-                case 5:
-                    backToMainMenu();
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again...");
+            try {
+                option = scanner.nextInt();
+                switch (option) {
+                    case 1:
+                        seeAllCustomers();
+                        break;
+                    case 2:
+                        seeAllRooms();
+                        break;
+                    case 3:
+                        seeAllReservations();
+                        break;
+                    case 4:
+                        addRoom();
+                        break;
+                    case 5:
+                        backToMainMenu();
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again...");
+                }
+            } catch (InputMismatchException exp) {
+                System.out.println("Invalid option. Please enter a valid number.");
+                scanner.next();
             }
         }
-        scanner.close();
+
     }
 
     private void seeAllCustomers() {
@@ -60,7 +65,7 @@ public class AdminMenu {
         if (customers.isEmpty()) {
             System.out.println("No customers found.");
         } else {
-            for (Customer customer:customers){
+            for (Customer customer : customers) {
                 System.out.println(customer);
             }
         }
@@ -73,7 +78,7 @@ public class AdminMenu {
         if (rooms.isEmpty()) {
             System.out.println("No rooms found.");
         } else {
-            for (IRoom room:rooms){
+            for (IRoom room : rooms) {
                 System.out.println(room);
             }
         }
